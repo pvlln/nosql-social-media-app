@@ -1,6 +1,6 @@
-const { Schema, model } = require('mongoose');
-const thoughtSchema = require('./thought.js');
+const {Schema, model } = require('mongoose');
 
+// Schema that creates user model
 const userSchema = new Schema(
     {
         username: {
@@ -28,7 +28,6 @@ const userSchema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: User,
                 // Check self-reference
-
             },
         ],
     },
@@ -40,6 +39,6 @@ const userSchema = new Schema(
     },
 );
 
+// Create and export user model
 const User = model('user', userSchema );
-
 module.exports = User;
