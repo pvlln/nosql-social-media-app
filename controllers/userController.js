@@ -1,4 +1,3 @@
-const { ObjectId } = require('mongoose').Types;
 const {User, Thought} = require('../models');
 
 // Export controller
@@ -6,7 +5,7 @@ module.exports = {
     // GET all users
     async getUsers(req,res){
         try {
-            const users = await User.findAll();
+            const users = await User.find();
             res.json(users);
         } catch (error) {
             console.log(error);
@@ -59,7 +58,8 @@ module.exports = {
             if (!user){
                 res.status(404).json({message: "No user found. Please try again with a different ID."})
             };
-            res.json({message: `The following user has been deleted: ${user}`});
+            await Thought.deleteMany({_id: {$in:user.thoughts}});
+            res.json({message: "The user (and their thoughts) has been deleted."});
         } catch (error) {
             res.status(500).json(error);
         }
