@@ -24,7 +24,7 @@ module.exports = {
         }
     },
     // POST new thought
-    async getThoughts(req,res){
+    async createThought(req,res){
         try {
             const newThought = await Thought.create(req.body);
             // Use objectId to push the created thought's id into the user's thoughts
