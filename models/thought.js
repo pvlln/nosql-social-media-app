@@ -1,23 +1,26 @@
 const {Schema, model} = require('mongoose');
 const reactionSchema = require('./reaction.js');
+const User = require('./user.js');
+const dayjs = require('dayjs');
 
 // Schema to create a thought model
 const thoughtSchema = new Schema(
     {
-        thoguhtText: {
+        thoughtText: {
             type: String,
             required: true,
             maxlength: 280,
-            minlength: 1
+            minlength: 1,
         },
         createdAt: {
             type: Date,
             default: Date.now,
-            // get: add getter,
+            get: (timestamp) => dayjs(timestamp).format('MM/DD/YYYY'),
         },
-        username: {
+        userId: {
             type: Schema.Types.ObjectId,
-            ref: username
+            ref: 'user',
+            // ATM this is the userId. Need to make it username
         },
         reactions: [reactionSchema],
     },

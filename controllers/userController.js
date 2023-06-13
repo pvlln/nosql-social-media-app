@@ -5,7 +5,7 @@ module.exports = {
     // GET all users
     async getUsers(req,res){
         try {
-            const users = await User.find();
+            const users = await User.find().populate("thoughts").populate("friends");
             res.json(users);
         } catch (error) {
             console.log(error);
@@ -15,8 +15,7 @@ module.exports = {
     // GET a single user by id
     async getSingleUser(req,res){
         try {
-            const user = await User.findOne({_id: req.params.id}).select('__v');
-            // Select? Is thought and friend data populated?
+            const user = await User.findOne({_id: req.params.id}).populate("thoughts").populate("friends");
             if (!user){
                 return res.status(404).json({message: "No user found. Please try another ID."})
             }
@@ -67,12 +66,12 @@ module.exports = {
     // POST new friend
     async addFriend(req,res){
         try {
-            const newFriend = await User.findOne({id: req.params.friendId});
+            const newFriend = await User.findOne({_id: req.params.friendId});
             if (!newFriend){
                 res.status(404).json({message:"Friend not found. Please try again with a different ID."})
             };
             const user = await User.findOneAndUpdate(
-                {id: req.params.userId},
+                {_id: req.params.userId},
                 {$addToSet: {friends: newFriend}},
                 // Where are friendId and userId defined??- route??
                 {runValidators:true, new: true}
@@ -80,6 +79,7 @@ module.exports = {
             if (!user){
                 res.status(404).json({message: "No user found. Please try again with a different ID."})
             }
+            res.json(newFriend);
         } catch (error) {
             res.status(500).json(error);
         }

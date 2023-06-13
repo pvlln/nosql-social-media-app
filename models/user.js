@@ -1,5 +1,10 @@
 const {Schema, model } = require('mongoose');
+const Thought = require('./thought.js');
 
+const validateEmail = function (email){
+    let search = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+    return search.test(email);
+};
 // Schema that creates user model
 const userSchema = new Schema(
     {
@@ -13,21 +18,19 @@ const userSchema = new Schema(
             type: String,
             unique: true,
             required: true,
-            validate: {
-                // email validation
-            },
+            validate: [validateEmail, "Invalid email."],
         },
         thoughts: [
             {
                 type: Schema.Types.ObjectId,
-                ref: Thoughts,
+                ref: 'thought',
             },
         ],
         friends: [
             {
                 type: Schema.Types.ObjectId,
-                ref: User,
-                // Check self-reference
+                ref: 'user',
+                // Check self-reference- 'User'? or this
             },
         ],
     },

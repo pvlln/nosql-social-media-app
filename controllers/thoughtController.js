@@ -5,7 +5,7 @@ module.exports = {
     // GET all thoughts
     async getThoughts(req,res){
         try {
-            const allThoughts = await Thought.find();
+            const allThoughts = await Thought.find().populate("reactions").populate("userId");
             res.json(allThoughts);
         } catch (error) {
             res.status(500).json(error);
@@ -14,7 +14,7 @@ module.exports = {
     // GET one thought
     async getSingleThought(req,res){
         try {
-            const thought = await Thought.findOne({_id: req.params.thoughtId}).select('-__v');
+            const thought = await Thought.findOne({_id: req.params.thoughtId}).populate("reactions").populate("userId");
             if (!thought){
                 return res.status(404).json({message:"Thought not found. Please try again."});
             };
@@ -27,7 +27,13 @@ module.exports = {
     async createThought(req,res){
         try {
             const newThought = await Thought.create(req.body);
-            // Use objectId to push the created thought's id into the user's thoughts
+            const user = await User.findOneAndUpdate(
+                {_id: req.body.userId},
+                {$push: {thoughts: newThought._id}},
+            );
+            if (!user) {
+                res.status(404).json({message:"User not found. Pleas try again."});
+            };
             res.json(newThought);
         } catch (error) {
             console.log(error);
@@ -38,7 +44,7 @@ module.exports = {
     async updateThought(req,res){
         try {
             const thought = await Thought.findOneAndUpdate(
-                {_id: req.params.id},
+                {_id: req.params.thoughtId},
                 {$set: req.body},
                 {runValidators: true, new: true}
             );
