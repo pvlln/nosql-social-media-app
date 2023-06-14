@@ -86,4 +86,36 @@ module.exports = {
             res.status(500).json(error);
         }
     },
+    // POST new reaction
+    async createReaction(req,res){
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                {_id: req.params.thoughtId},
+                {$addToSet: {reactions: req.body}},
+                {runValidators: true, new: true }
+            );
+            if (!thought){
+                res.status(404).json({message:"Thought not found. Please try a different ID."});
+            }
+            res.json(thought);
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+    // DELETE reaction
+    async deleteReaction(req,res){
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                {_id: req.params.thoughtId},
+                {$pull: {reaction: {reactionId: req.params.reactionId}}},
+                {runValidators: true, new: true }
+            );
+            if (!thought){
+                res.status(404).json({message:"Thought not found. Please try a different ID."});
+            }
+            res.json(thought);
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    }
 };
