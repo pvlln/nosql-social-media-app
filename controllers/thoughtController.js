@@ -1,6 +1,20 @@
 const { ObjectId } = require('mongoose').Types;
 const {User, Thought} = require('../models');
 
+// Reaction count virtual
+const reactionCount = async (thoughtId) => {
+    Thought.aggregate([
+      { $match: { _id: new ObjectId(thoughtId) } },
+      { $unwind: "$reactions" },
+      {
+        $group: {
+          _id: new ObjectId(thoughtId),
+          reactions: { $count: "$reactions" },
+        },
+      },
+    ]);
+};
+
 module.exports = {
     // GET all thoughts
     async getThoughts(req,res){
@@ -18,7 +32,11 @@ module.exports = {
             if (!thought){
                 return res.status(404).json({message:"Thought not found. Please try again."});
             };
-            res.json(thought);
+            const thoughtObj = {
+                thought,
+                reactionCount: await reactionCount(req.params.thoughtId),
+            }
+            res.json(thoughtObj);
         } catch (error) {
             res.status(500).json(error);
         }
