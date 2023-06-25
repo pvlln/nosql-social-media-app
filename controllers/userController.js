@@ -1,17 +1,20 @@
 const { User, Thought } = require("../models");
+const { ObjectId } = require('mongoose').Types;
 
 // Friend count virtual
 const friendCount = async(userId) => {
-    User.aggregate([
+    let friendCount = await User.aggregate([
         {$match: {_id: new ObjectId(userId)}},
         {$unwind: '$friends'},
         {
             $group: {
                 _id: new ObjectId(userId),
-                reactions: {$count: '$friends'},
+                reactions: {$count:{}},
             },
         },
     ]);
+    console.log(friendCount);
+    return friendCount.length;
 };
 
 // Export controller
@@ -29,7 +32,7 @@ module.exports = {
   // GET a single user by id
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.id })
+      const user = await User.findOne({ _id: req.params.userId })
         .populate("thoughts")
         .populate("friends");
       if (!user) {
@@ -39,9 +42,10 @@ module.exports = {
       }
       const userObj = {
         user,
-        friendCount: await friendCount(req.params.id),
+        friendCount: await friendCount(req.params.userId),
       }
-      res.json(user);
+      console.log(userObj);
+      res.json(userObj);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
@@ -79,7 +83,7 @@ module.exports = {
   // DELETE user
   async deleteUser(req, res) {
     try {
-      const user = await User.findOneAndDelete({ id: req.params.userId });
+      const user = await User.findOneAndDelete({ _id: req.params.userId });
       if (!user) {
         res
           .status(404)
@@ -125,7 +129,7 @@ module.exports = {
   // DELETE friend
   async removeFriend(req, res) {
     try {
-      const friend = await User.findOne({ id: req.params.friendId });
+      const friend = await User.findOne({ _id: req.params.friendId });
       if (!friend) {
         res
           .status(404)
@@ -133,9 +137,10 @@ module.exports = {
             message: "Friend not found. Please try again with a different ID.",
           });
       }
+      console.log(req.params.userId);
       const user = await User.findOneAndUpdate(
-        { id: req.params.userId },
-        { $pull: { friend: { friendId: req.params.friendId } } },
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }
       );
       if (!user) {
