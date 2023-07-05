@@ -17,7 +17,9 @@ I created MongoDB application for a store's database, that includes users, thoug
 To install this app, you will need to install npm and mysql and be able to access mysql databases, as well as having the ability to use MongoDB. Then, you can use the command "npm start" in your command line to start the application. Finally, you can test the routes using insomnia.
 
 Here is a screen recording of my application in action:
-![App demo screen recording](./assets/RECORDING-LINK)
+![App demo screen recording](https://drive.google.com/file/d/18veL6ynQJrFr_uqq61ugCb_-Dmr_w_nN/view?usp=sharing)
+
+In case you're having trouble accessing the link, here it is again: https://drive.google.com/file/d/18veL6ynQJrFr_uqq61ugCb_-Dmr_w_nN/view?usp=sharing
 
 
 
