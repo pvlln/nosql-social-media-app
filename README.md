@@ -32,7 +32,7 @@ This project is licensed under the MIT license. For more information on this lic
 [MIT License](https://opensource.org/licenses/MIT) 
 
 ## Contribution
-No contributions accepted. 
+No contributions accepted. This project was made using the source code provided by Columbia University. Only the additions to this code are of my intellectual property.
 
 ## Testing
 Play around with the database!! 
